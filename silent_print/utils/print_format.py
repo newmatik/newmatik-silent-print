@@ -2,13 +2,14 @@ import frappe, base64
 # from frappe.utils.pdf import get_pdf,cleanup
 from frappe import _
 
-@frappe.whitelist()
-def print_silently(doctype, name, print_format, print_type):
-	user = frappe.db.get_single_value("Silent Print Settings", "print_user")
-	tab_id = frappe.db.get_single_value("Silent Print Settings", "tab_id")
-	pdf = create_pdf(doctype, name, print_format)
-	data = {"doctype": doctype, "name": name, "print_format": print_format, "print_type": pdf["print_type"], "tab_id": tab_id, "pdf": pdf["pdf_base64"]}
-	frappe.publish_realtime("print-silently", data, user=user)
+# Won't be using this Silent Print Remote function
+# @frappe.whitelist()
+# def print_silently(doctype, name, print_format, print_type):
+# 	user = frappe.db.get_single_value("Silent Print Settings", "print_user")
+# 	tab_id = frappe.db.get_single_value("Silent Print Settings", "tab_id")
+# 	pdf = create_pdf(doctype, name, print_format)
+# 	data = {"doctype": doctype, "name": name, "print_format": print_format, "print_type": pdf["print_type"], "tab_id": tab_id, "pdf": pdf["pdf_base64"]}
+# 	frappe.publish_realtime("print-silently", data, user=user)
 
 @frappe.whitelist()
 def set_master_tab(tab_id):
