@@ -1,6 +1,6 @@
 ## Silent Print
 
-This is a Frappe App for printing documents silently, that is, without having to interact with browser's print dialog and send the printing order directly to the printer.
+This is a Frappe App forked from [roquegv/Silent-Print-ERPNext](https://github.com/roquegv/Silent-Print-ERPNext) for printing documents silently, that is, without having to interact with browser's print dialog and send the printing order directly to the printer.
 
 This is achieved using the tool called [Webapp Hardware Bridge](https://github.com/imTigger/webapp-hardware-bridge) (HWB). This is basically a Java program that acts as a bridge between the webapp and hardware (printers and serial ports), accepting websocket request. 
 
@@ -22,24 +22,21 @@ However, this has it limit. Once you've selected the printer that will print by 
 
 So, what is proposed with this app is that you can have more flexibility dealing with printers.
 
-## Funtionality
+## Functionality
 
-So far, this app covers the following scenarios:
-1. Silent Printing from standard Point of Sale (POS)
-2. Silent Printing from any document via Custom Script. In this case, you could have many printers connected to your computer and the app will allow you to print to them silently (see example bellow).
-3. Print from any device (even from the ones that are not connected to the printers)
+Silent Printing from any document via Custom Script. In this case, you could have many printers connected to your computer and the app will allow you to print to them silently (see example bellow).
 
 ## How to install it
 Like any other standard frappe app:
-1. bench get-app https://github.com/roquegv/Silent-Print-ERPNext
-2. bench install-app silent_print
+1. bench get-app https://github.com/newmatik/newmatik-silent-print
+2. bench install-app newmatik-silent_print
 
 ## How to use it
 
 First, install the Webapp Hardware Bridge (WHB) in the computer which has conection to the printers.
 
 ### WHB Instalation in Windows
-1. Go to the [realeses' page](https://github.com/imTigger/webapp-hardware-bridge/releases) and download the last version's .exe (in this case it is v0.14.0). 
+1. Go to the [releases page](https://github.com/imTigger/webapp-hardware-bridge/releases) and download the latest version's .exe.
 2. Run the file.
 
 ### WHB Configuration
@@ -60,14 +57,6 @@ Go to the awesome bar and type "Silent Print Format". Go for it and create a new
 
 Here is an example:
 ![Silent Print Format Form](silent_print_format_form.png)
-
-### Using in POS
-To use this app in Point of Sales (POS), do:
-1. Go to a POS Profile
-2. In the Print Setting section, set the Print Format you selected in the Silent Print Format.
-
-This implies that this Print Format will print silently when this POS Profile is used in the Point of Sale.
-That is, after you completed the order, you can "Print Receipt" and it will print silently (i.e. without interacting with the browser's print dialog).
 
 ### Printing from any document via Custom Script
 To be able to print form any document, follow these steps:
@@ -107,52 +96,6 @@ var send2bridge = function (frm, print_format, print_type){
 ```
 
 This creates a two custom buttons that send the print order to the bridge, via web socket. Notice that you can send the order to any printer with any print format.
-
-## Print Silent & Remotely
-This is the same as the last scenario except that does not only print silently but also prints to any printer. This does not require that the printer is in the same LAN. The only requirement is that there sould be a system user that is logged in in the computer that has connection to the printer(s).
-
-In order to set that user, go to the awesomebar and type "Silent Print Settings"; there select the user.
-
-Then, create a new Custom Script, with a following code:
-
-```
-frappe.ui.form.on('POS Invoice', {
-	refresh(frm) {
-		frm.add_custom_button('PRINT SILENT & REMOTELY', () => {send2bridgeRemote(frm, "POS Invoice", "COMANDA")})
-	}
-})
-
-var send2bridgeRemote = function (frm, print_format, print_type){
-	frappe.call({
-		method: 'silent_print.utils.print_format.print_silently',
-		args: {
-			doctype: frm.doc.doctype,
-			name: frm.doc.name,
-			print_format: print_format,
-			print_type: print_type
-		}
-	})
-}
-```
-
-This makes a call to the following function:
-
-```
-@frappe.whitelist()
-def print_silently(doctype, name, print_format, print_type):
-	data = {"doctype": doctype, "name": name, "print_format": print_format, "print_type": print_type}
-	user = frappe.db.get_single_value("Silent Print Settings", "print_user")
-	frappe.publish_realtime("print-silently", data, user)
-```
-This uses the `frappe.publish_realtime` function to send the print order to the user that has printer connection. This feature send message to every browser's tab in which the app is open. In order to avoid multiple printing (one by every tab), it's important to set a master tab that will finally send the print order. In order to do this, this app adds a icon next to the Frappe/ERPNext logo in the navbar, so when this icon in clicked, it will tell the app that this is the master tab, and the icon will turn into green.
-
-![Master tab Icon for remote silent print](master-tab-icon.png)
-
-## Comming features
-- [x] Print to multiple printers at the same time
-- [x] Print from any device (even from the ones that are not connected to the printers)
-- [ ] Print automatically after some document event (e.g. creation)
-- [ ] POS Awesome integration (?)
 
 #### License
 
