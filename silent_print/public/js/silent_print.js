@@ -1,6 +1,5 @@
-
-frappe.provide("frappe.silent_print");
-frappe.silent_print.WebSocketPrinter = function (options) {
+frappe.provide("silent_print.utils");
+silent_print.utils.WebSocketPrinter = function (options) {
     var defaults = {
         url: "ws://127.0.0.1:12212/printer",
         onConnect: function () {
@@ -14,6 +13,7 @@ frappe.silent_print.WebSocketPrinter = function (options) {
     var settings = Object.assign({}, defaults, options);
     var websocket;
     var connected = false;
+    var reconnectAttempts = 0;
 
     var onMessage = function (evt) {
         settings.onUpdate(evt.data);
@@ -21,16 +21,23 @@ frappe.silent_print.WebSocketPrinter = function (options) {
 
     var onConnect = function () {
         connected = true;
+        frappe.whb_status = "Connected";
         settings.onConnect();
     };
 
     var onDisconnect = function () {
         connected = false;
+        frappe.whb_status = "Disconnected";
         settings.onDisconnect();
-        reconnect();
+
+        if (reconnectAttempts < 4) {
+            reconnect();
+            reconnectAttempts++;
+        }
     };
     
     var onError = function () {
+        frappe.whb_status = "Disconnected";
         if (frappe.whb == undefined){
             // frappe.msgprint(__("Could not establish a connection to the printer. Please verify that the <a href='https://github.com/imTigger/webapp-hardware-bridge' target='_blank'>WebApp Hardware Bridge</a> is running."))
             frappe.whb = true
@@ -59,8 +66,17 @@ frappe.silent_print.WebSocketPrinter = function (options) {
         }
     };
 
-    this.isConnected = function () {
+    var isConnected = function () {
+        console.log("Is Connected:" + connected);
         return connected;
+    };
+
+    // load the websocket on reload
+    window.onbeforeunload = function() {
+        if (reconnectAttempts < 4) {
+            reconnect();
+            reconnectAttempts++;
+        }
     };
 
     connect();
