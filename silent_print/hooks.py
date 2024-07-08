@@ -16,11 +16,11 @@ app_license = "MIT"
 
 # include js, css files in header of desk.html
 # app_include_css = "/assets/silent_print/css/silent_print.css"
-# app_include_js = "/assets/silent_print/js/silent_print.js"
+app_include_js = "/assets/silent_print/js/silent_print.js"
 
 # include js, css files in header of web template
 # web_include_css = "/assets/silent_print/css/silent_print.css"
-# web_include_js = "/assets/silent_print/js/silent_print.js"
+web_include_js = "/assets/silent_print/js/silent_print.js"
 
 # include js in page
 # page_js = {"page" : "public/js/file.js"}
@@ -128,7 +128,7 @@ app_license = "MIT"
 # }
 
 # injected in desk.html
-app_include_js = "assets/js/silent_print.min.js"
+# app_include_js = "assets/js/silent_print.js"
 # app_include_css = "assets/js/app.min.css"
 
-page_js = {"point-of-sale" : "public/js/silent_print.js"}
+# page_js = {"point-of-sale" : "public/js/silent_print.js"}

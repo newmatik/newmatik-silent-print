@@ -1,4 +1,5 @@
 frappe.provide("silent_print.utils");
+silent_print.utils.whb_status = "";
 silent_print.utils.WebSocketPrinter = function (options) {
     var defaults = {
         url: "ws://127.0.0.1:12212/printer",
@@ -21,13 +22,15 @@ silent_print.utils.WebSocketPrinter = function (options) {
 
     var onConnect = function () {
         connected = true;
-        frappe.whb_status = "Connected";
+        silent_print.utils.whb_status = "Connected";
+        console.log("Printer Connected.")
         settings.onConnect();
     };
 
     var onDisconnect = function () {
         connected = false;
-        frappe.whb_status = "Disconnected";
+        silent_print.utils.whb_status = "Disconnected";
+        console.log("Printer Disconnected. Reconnecting...")
         settings.onDisconnect();
 
         if (reconnectAttempts < 4) {
@@ -37,7 +40,8 @@ silent_print.utils.WebSocketPrinter = function (options) {
     };
     
     var onError = function () {
-        frappe.whb_status = "Disconnected";
+        silent_print.utils.whb_status = "Disconnected";
+        console.log("Printer Disconnected. Reconnecting...")
         if (frappe.whb == undefined){
             // frappe.msgprint(__("Could not establish a connection to the printer. Please verify that the <a href='https://github.com/imTigger/webapp-hardware-bridge' target='_blank'>WebApp Hardware Bridge</a> is running."))
             frappe.whb = true
@@ -71,11 +75,17 @@ silent_print.utils.WebSocketPrinter = function (options) {
         return connected;
     };
 
-    // load the websocket on reload
+    // Set a flag in localStorage before unloading
     window.onbeforeunload = function() {
-        if (reconnectAttempts < 4) {
+        localStorage.setItem('reloading', 'true');
+    };
+
+    window.onload = function() {
+        // Check if the reloading flag is set in localStorage
+        if (localStorage.getItem('reloading') === 'true') {
             reconnect();
-            reconnectAttempts++;
+            // Clear the reloading flag after reconnecting
+            localStorage.removeItem('reloading');
         }
     };
 
