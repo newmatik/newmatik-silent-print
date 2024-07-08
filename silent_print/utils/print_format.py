@@ -40,19 +40,21 @@ def get_pdf_options(silent_print_format):
 			"page-width": silent_print_format.get("custom_width"),
 			"page-height": silent_print_format.get("custom_height")
 		}
-	options.update({
-		"orientation": silent_print_format.orientation,
-		"margin-left": f'{silent_print_format.get("margin_left")}mm' or "15mm",
-		"margin-right": f'{silent_print_format.get("margin_right")}mm' or "15mm",
-	})
-	if silent_print_format.get("margin_top") != "" and silent_print_format.get("margin_top") != None:
+	options.update({"orientation": silent_print_format.orientation})
+	
+	if not silent_print_format.use_default_margin or not options.get("page-size") == "A4":
 		options.update({
-			"margin-top": f'{silent_print_format.get("margin_top")}mm'
+			"margin-left": f'{silent_print_format.get("margin_left")}mm' or "15mm",
+			"margin-right": f'{silent_print_format.get("margin_right")}mm' or "15mm",
 		})
-	if silent_print_format.get("margin_bot") != "" and silent_print_format.get("margin_bot") != None:
-		options.update({
-			"margin-bottom": f'{silent_print_format.get("margin_bot")}mm'
-		})
+		if silent_print_format.get("margin_top") != "" and silent_print_format.get("margin_top") != None:
+			options.update({
+				"margin-top": f'{silent_print_format.get("margin_top")}mm'
+			})
+		if silent_print_format.get("margin_bot") != "" and silent_print_format.get("margin_bot") != None:
+			options.update({
+				"margin-bottom": f'{silent_print_format.get("margin_bot")}mm'
+			})
 
 	return options
 
