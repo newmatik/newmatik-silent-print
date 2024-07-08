@@ -33,13 +33,27 @@ def create_pdf(doctype, name, silent_print_format, doc=None, no_letterhead=0):
 
 def get_pdf_options(silent_print_format):	
 	options = {
-		"page-size": silent_print_format.get("page_size") or "A4"
+		"page-size": silent_print_format.get("page_size") or "A4",
 	}
 	if silent_print_format.get("page_size") == "Custom":
 		options = {
 			"page-width": silent_print_format.get("custom_width"),
 			"page-height": silent_print_format.get("custom_height")
 		}
+	options.update({
+		"orientation": silent_print_format.orientation,
+		"margin-left": f'{silent_print_format.get("margin_left")}mm' or "15mm",
+		"margin-right": f'{silent_print_format.get("margin_right")}mm' or "15mm",
+	})
+	if silent_print_format.get("margin_top") != "" and silent_print_format.get("margin_top") != None:
+		options.update({
+			"margin-top": f'{silent_print_format.get("margin_top")}mm'
+		})
+	if silent_print_format.get("margin_bot") != "" and silent_print_format.get("margin_bot") != None:
+		options.update({
+			"margin-bottom": f'{silent_print_format.get("margin_bot")}mm'
+		})
+
 	return options
 
 
@@ -111,6 +125,8 @@ def prepare_options(html, options):
 	if not options:
 		options = {}
 
+	passed_options = options.copy()
+
 	options.update({
 		'print-media-type': None,
 		'background': None,
@@ -138,7 +154,12 @@ def prepare_options(html, options):
 	# if not options.get("page-size"):
 	# 	options['page-size'] = frappe.db.get_single_value("Print Settings", "pdf_page_size") or "A4"
 
-	# options['margin-left'] = '50mm'
+	# override top and botton margin
+	if passed_options.get("margin-top"):
+		options["margin-top"] = passed_options["margin-top"]
+	if passed_options.get("margin-bottom"):
+		options["margin-bottom"] = passed_options["margin-bottom"]
 
 
 	return html, options
+

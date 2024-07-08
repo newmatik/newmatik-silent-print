@@ -10,7 +10,15 @@
   "page_size",
   "custom_width",
   "custom_height",
-  "default_print_type"
+  "default_print_type",
+  "orientation",
+  "use_default_margin",
+  "margin_section",
+  "margin_left",
+  "margin_right",
+  "column_break_1iegc",
+  "margin_top",
+  "margin_bot"
  ],
  "fields": [
   {
@@ -48,10 +56,57 @@
    "fieldname": "default_print_type",
    "fieldtype": "Data",
    "label": "Default Print Type"
+  },
+  {
+   "default": "Portrait",
+   "fieldname": "orientation",
+   "fieldtype": "Select",
+   "label": "Orientation",
+   "options": "Portrait\nLandscape"
+  },
+  {
+   "default": "1",
+   "depends_on": "eval: doc.use_default_margin == 0",
+   "description": "test",
+   "fieldname": "margin_section",
+   "fieldtype": "Section Break",
+   "label": "Margin"
+  },
+  {
+   "default": "15",
+   "fieldname": "margin_left",
+   "fieldtype": "Data",
+   "label": "Margin Left (in mm)"
+  },
+  {
+   "default": "15",
+   "fieldname": "margin_right",
+   "fieldtype": "Data",
+   "label": "Margin Right (in mm)"
+  },
+  {
+   "fieldname": "column_break_1iegc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "margin_top",
+   "fieldtype": "Data",
+   "label": "Margin Top (in mm)"
+  },
+  {
+   "fieldname": "margin_bot",
+   "fieldtype": "Data",
+   "label": "Margin Bottom (in mm)"
+  },
+  {
+   "default": "1",
+   "fieldname": "use_default_margin",
+   "fieldtype": "Check",
+   "label": "Use ERP Default Margin"
   }
  ],
  "links": [],
- "modified": "2024-03-27 05:31:04.497609",
+ "modified": "2024-07-05 16:01:41.034457",
  "modified_by": "Administrator",
  "module": "Silent Print Core",
  "name": "Silent Print Format",
