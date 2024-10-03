@@ -24,7 +24,6 @@
   {
    "fieldname": "print_format",
    "fieldtype": "Link",
-   "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Print Format",
    "options": "Print Format",
@@ -55,12 +54,14 @@
    "description": "This is the label used to identify the printer in the Webapp Hardware Bridge",
    "fieldname": "default_print_type",
    "fieldtype": "Data",
+   "in_list_view": 1,
    "label": "Default Print Type"
   },
   {
    "default": "Portrait",
    "fieldname": "orientation",
    "fieldtype": "Select",
+   "in_list_view": 1,
    "label": "Orientation",
    "options": "Portrait\nLandscape"
   },
@@ -106,7 +107,7 @@
   }
  ],
  "links": [],
- "modified": "2024-07-05 16:01:41.034457",
+ "modified": "2024-10-03 12:12:55.728586",
  "modified_by": "Administrator",
  "module": "Silent Print Core",
  "name": "Silent Print Format",

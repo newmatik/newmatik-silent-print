@@ -123,11 +123,8 @@ def get_pdf(html, options=None, output=None):
 
 
 def prepare_options(html, options):
-	print("\n", options, "\n")
 	if not options:
 		options = {}
-
-	passed_options = options.copy()
 
 	options.update({
 		'print-media-type': None,
@@ -153,15 +150,8 @@ def prepare_options(html, options):
 		options['cookie'] = [('sid', '{0}'.format(frappe.session.sid))]
 
 	# page size
-	# if not options.get("page-size"):
-	# 	options['page-size'] = frappe.db.get_single_value("Print Settings", "pdf_page_size") or "A4"
-
-	# override top and botton margin
-	if passed_options.get("margin-top"):
-		options["margin-top"] = passed_options["margin-top"]
-	if passed_options.get("margin-bottom"):
-		options["margin-bottom"] = passed_options["margin-bottom"]
-
+	if not options.get("page-size"):
+		options['page-size'] = frappe.db.get_single_value("Print Settings", "pdf_page_size") or "A4"
 
 	return html, options
 
