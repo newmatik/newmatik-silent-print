@@ -132,3 +132,5 @@ web_include_js = "/assets/silent_print/js/silent_print.js"
 # app_include_css = "assets/js/app.min.css"
 
 # page_js = {"point-of-sale" : "public/js/silent_print.js"}
+
+fixtures = ["Silent Print Format"]
