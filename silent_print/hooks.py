@@ -16,7 +16,10 @@ app_license = "MIT"
 
 # include js, css files in header of desk.html
 # app_include_css = "/assets/silent_print/css/silent_print.css"
-app_include_js = "/assets/silent_print/js/silent_print.js"
+app_include_js = [
+    "/assets/silent_print/js/silent_print.js", 
+    "/assets/silent_print/js/newmatik_silent_print.js"
+]
 
 # include js, css files in header of web template
 # web_include_css = "/assets/silent_print/css/silent_print.css"
@@ -26,7 +29,12 @@ web_include_js = "/assets/silent_print/js/silent_print.js"
 # page_js = {"page" : "public/js/file.js"}
 
 # include js in doctype views
-# doctype_js = {"doctype" : "public/js/doctype.js"}
+doctype_js = {
+    "Warehouse" : "public/js/doctypes/warehouse.js",
+    "Work Order" : "public/js/doctypes/work_order.js",
+    "Shipment" : "public/js/doctypes/shipment.js",
+    "Delivery Note" : "public/js/doctypes/delivery_note.js",
+}
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
