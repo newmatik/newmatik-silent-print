@@ -194,10 +194,10 @@ $.extend(silent_print.newmatik, {
     delivery_note_button: function(frm) {
         add_button(function(){
             send2bridge(frm, "Delivery Note De", "DELIVERYNOTE", frm.doc.name, 0, frm.doc.language);
+            send2bridge(frm, "Delivery Note De", "DELIVERYNOTE1", frm.doc.name, 0, frm.doc.language);
         })
     },
     warehouse_button: function(frm) {
-        console.log(frm)
         add_button(function(){
             send2bridge(frm, "Warehouse Label", "WAREHOUSE", frm.doc.name);
         })
