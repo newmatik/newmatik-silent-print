@@ -19,9 +19,8 @@ $.extend(silent_print.newmatik, {
         }
     },
     work_order_button: function(frm){
-        var whb_status = silent_print.utils.whb_status
-        var fields = []
         var rack_panel_dt = {}
+        var work_orders = []
         frappe.call({
             method: "silent_print.api.work_order.get_rack_labels_count",
             args: {
@@ -32,88 +31,75 @@ $.extend(silent_print.newmatik, {
             async: false,
             callback: function(r) {
                 rack_panel_dt = r.message
-                rack_panel_dt['workorders'].map((val, idx) => {
-                    var fieldname = val['abbr'] == "S" ? "order_paper_s" : "order_paper_"
-                    fields.push({
-                        label: 'Order Paper ' + val['abbr'],
-                        fieldname: fieldname,
-                        fieldtype: 'Check',
-                        default: 1
-                    })
-                })
+                work_orders = r.message.workorders
             }
         })
-        fields.push(
-            {
-                label: 'Kitting Box Label',
-                fieldname: 'kitting_box_label',
-                fieldtype: 'Check',
-                default: 1
-            },
-            {
-                label: 'Rack Labels',
-                fieldname: 'rack_labels',
-                fieldtype: 'Check',
-                default: 1
-            },
-            {
-                label: '',
-                fieldname: 'rack_labels_html',
-                fieldtype: 'HTML',
-                options: `
-                    <section>
-                        <p>No of Rack Labels <input type="text" value="${rack_panel_dt['pcb_per_panel']}" id="d_no_of_rack_labels" style='width: 30px; text-align: center'></p>
-                        <p>(${frm.doc.qty} PCB / ${rack_panel_dt['pcb_panel']} PCB per panel / ${rack_panel_dt['panels_per_rack']} panels per rack)</p>
-                    </section>
-                `
-            }
-        )
-        // add button
-        add_button(function(){
-            let d = new frappe.ui.Dialog({
+
+        // KITTING BOX LABEL
+        add_button(()=>{send2bridge(frm, "Kitting Box Label v2", "KITTING2", frm.doc.name)}, "Kitting Box Label")
+
+        // RACK LABEL
+        add_button(()=>{
+            var d = new frappe.ui.Dialog({
                 title: 'Print Work Order',
-                    fields: fields,
-                    size: 'small', // small, large, extra-large 
-                    primary_action_label: 'Print',
-                    primary_action(values) {
-                        var rack_labels = $("input#d_no_of_rack_labels").val()
-                        values['work_orders'] = rack_panel_dt['workorders']
-                        var print_formats = []
-                        if (values['kitting_box_label'] == 1){
-                            print_formats.push({
-                                "print_format_name": "Kitting Box Label v2",
-                                "name": cur_frm.doc.name,
-                                "print_type": "KITTING2",
-                            })
-                        }
-    
-                        rack_panel_dt['workorders'].forEach((itm) => {
-                            if ((values['order_paper_s'] == 1 && itm['abbr'] == 'S') || (values['order_paper_'] == 1 && itm['abbr'] != 'S')) {
-                                print_formats.push({
-                                    "print_format_name": "Order Papers",
-                                    "name": itm['work_order'],
-                                    "print_type": "ORDERPAPERS",
-                                });
-                            }
-                        });
-    
-                        if (values['rack_labels']){
-                            for (var i=1; i <= rack_labels; i++){
-                                print_formats.push({
-                                    "print_format_name": frm.doc.sales_order? "Rack Label (With Date)" : "Rack Label (No Date)",
-                                    "name": cur_frm.doc.name,
-                                    "print_type": "RACKLABEL",
-                                });
-                            }
-                        }
-                        console.log("print formatss ==>", print_formats)
-                        print_formats.map((val, idx) => {
-                            send2bridge(frm, val.print_format_name, val.print_type, val.name)
-                        })
-                        d.hide();
+                fields: [
+                    {
+                        label: '',
+                        fieldname: 'rack_labels_html',
+                        fieldtype: 'HTML',
+                        options: `
+                            <section>
+                                <p>No of Rack Labels <input type="text" value="${rack_panel_dt['pcb_per_panel']}" id="d_no_of_rack_labels" style='width: 30px; text-align: center'></p>
+                                <p>(${frm.doc.qty} PCB / ${rack_panel_dt['pcb_panel']} PCB per panel / ${rack_panel_dt['panels_per_rack']} panels per rack)</p>
+                            </section>
+                        `
                     }
-                });
-                d.show();
+                ],
+                primary_action: function(){
+                    var print_type = frm.doc.sales_order? "Rack Label (With Date)" : "Rack Label (No Date)"
+                    var no_of_rack_labels = $("input#d_no_of_rack_labels").val()
+                    for (var i=1; i <= no_of_rack_labels; i++){
+                        silent_print.newmatik.send2bridge(frm, print_type, "RACKLABEL", frm.doc.name);
+                    }
+                    show_alert(`Printing ${no_of_rack_labels} Rack Label`, 5);
+                    d.hide();
+                }
+            })
+            d.show()
+        }, "Rack Label")
+
+        // ORDER PAPER
+        add_button(()=>{}, "Order Paper <span class='down-arrow'>&raquo;</span>").addClass("order-paper-item")
+        var order_paper_items = ""
+        work_orders.map((itm, idx)=>{
+            order_paper_items += `<li><a class="dropdown-item submenu-list" href="#">${itm.work_order}</a></li>`
+        })
+        $("a.dropdown-item.order-paper-item").append(`<ul class="dropdown-submenu">${order_paper_items}<ul>`)
+        injectCSS(`
+            .down-arrow {
+                display: inline-block;
+                transform: rotate(90deg);
+            }
+            .dropdown-submenu {
+                display: none;
+                list-style-type: none;
+                padding: 0;
+                margin: 0;
+            }
+            .submenu-list {
+                padding: 5px 10px;
+            }
+            .submenu-list:hover {
+                background-color: var(--gray-200);
+            }
+            .dropdown-item:hover > .dropdown-submenu {
+                display: block;
+                margin-bottom: 0;
+            }
+        `)
+        $("a.submenu-list").click(function(){
+            var wo = $(this).text()
+            silent_print.newmatik.send2bridge(frm, "Order Papers", "ORDERPAPERS", wo)
         })
     },
     shipment_button: function(frm) {
@@ -207,19 +193,31 @@ $.extend(silent_print.newmatik, {
             send2bridge(frm, "Batch Label", "BATCH", cur_frm.doc.name);
         })
     },
-
+    send2bridge: function(frm, print_format, print_type, name, no_letterhead=1, language="en"){
+        send2bridge(frm, print_format, print_type, name, no_letterhead=1, language="en")
+    },
+    add_button: function(fn, print_item_name=null){
+        add_button(fn, print_item_name)
+    }
 })
 
-var add_button = function(fn){
+var add_button = function(fn, print_item_name=null){
     var whb_status = silent_print.utils.whb_status
     const print_icon = __('Print Direct <svg class="icon icon-sm"><use href="#icon-printer"></use></svg>');
-    var print_direct = cur_frm.add_custom_button(print_icon, fn).removeClass().addClass(whb_status == 'Connected' ? 'btn btn-primary' : 'btn btn-secondary-dark');
     if (whb_status != 'Connected'){
+        var print_direct = cur_frm.add_custom_button(print_icon, fn).removeClass().addClass('btn btn-secondary-dark');
         print_direct.off('click').on('click', () => {
             frappe.msgprint(__("Could not establish connection to the Webapp Hardware Bridge (WHB). Please verify that it is running before clicking the button again"));
         })
+    }else{
+        if (print_item_name!=null){
+            var print_direct = cur_frm.add_custom_button(print_item_name, fn, print_icon);
+            print_direct.parent().parent().find("button.btn-default").addClass("btn-primary");
+        }else{
+            var print_direct = cur_frm.add_custom_button(print_item_name, fn, print_icon);
+        }
+        return print_direct
     }
-   
 }
 
 var send2bridge = function (frm, print_format, print_type, name, no_letterhead=1, language="en"){
@@ -236,12 +234,18 @@ var send2bridge = function (frm, print_format, print_type, name, no_letterhead=1
             _lang: language
         },
         callback: (r) => {
-            console.log(r)
             printService.submit({
                 'type': print_type, //this is the label that identifies the printer in WHB's configuration
                 'url': 'file.pdf',
                 'file_content': r.message.pdf_base64
             });
+            show_alert('Printing '+ print_format, 5);
         }
     })
+}
+
+function injectCSS(cssString) {
+    const style = document.createElement('style');
+    style.innerHTML = cssString;
+    document.head.appendChild(style);
 }
