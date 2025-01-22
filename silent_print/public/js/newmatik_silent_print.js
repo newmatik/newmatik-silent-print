@@ -69,7 +69,13 @@ $.extend(silent_print.newmatik, {
         }, "Rack Label")
 
         // ORDER PAPER
-        add_button(()=>{}, "Order Paper <span class='down-arrow'>&raquo;</span>").addClass("order-paper-item")
+        var print_direct_icon = __('Print Direct <svg class="icon icon-sm"><use href="#icon-printer"></use></svg>');
+        frm.add_custom_button("Order Paper", function(){}, print_direct_icon).addClass("order-paper-item")
+        var order_paper_items = ""
+        work_orders.map((itm, idx)=>{
+            order_paper_items += `<li><a class="dropdown-item submenu-list" href="#">${itm.work_order}</a></li>`
+        })
+        // ORDER PAPER
         var order_paper_items = ""
         work_orders.map((itm, idx)=>{
             order_paper_items += `<li><a class="dropdown-item submenu-list" href="#">${itm.work_order}</a></li>`
