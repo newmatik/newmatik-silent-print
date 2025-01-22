@@ -70,7 +70,7 @@ $.extend(silent_print.newmatik, {
 
         // ORDER PAPER
         // not using `add_button()` function because of other custom conditions
-        if (frm.doc.docstatus != 2){
+        if (frm.doc.docstatus != 2 && silent_print.utils.whb_status == "Connected"){
             var print_direct_icon = __('Print Direct <svg class="icon icon-sm"><use href="#icon-printer"></use></svg>');
             frm.add_custom_button("Order Paper", function(){}, print_direct_icon).addClass("order-paper-item")
             var order_paper_items = ""
