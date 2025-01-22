@@ -1,6 +1,6 @@
 frappe.ui.form.on('Shipment', {
     refresh: function(frm){
-        if(frm.doc.status in ["Booked", "Submitted"]){
+        if(["Booked", "Submitted"].includes(frm.doc.status)){
             if (!frm.doc.service_provider || !frm.doc.shipment_id) {
                 const missingField = !frm.doc.service_provider ? "Service Provider" : "Shipment ID";
                 frappe.throw(__(`Can't proceed due to the ${missingField} missing field.`));
