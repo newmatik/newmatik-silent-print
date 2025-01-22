@@ -69,44 +69,47 @@ $.extend(silent_print.newmatik, {
         }, "Rack Label")
 
         // ORDER PAPER
-        var print_direct_icon = __('Print Direct <svg class="icon icon-sm"><use href="#icon-printer"></use></svg>');
-        frm.add_custom_button("Order Paper", function(){}, print_direct_icon).addClass("order-paper-item")
-        var order_paper_items = ""
-        work_orders.map((itm, idx)=>{
-            order_paper_items += `<li><a class="dropdown-item submenu-list" href="#">${itm.work_order}</a></li>`
-        })
-        // ORDER PAPER
-        var order_paper_items = ""
-        work_orders.map((itm, idx)=>{
-            order_paper_items += `<li><a class="dropdown-item submenu-list" href="#">${itm.work_order}</a></li>`
-        })
-        $("a.dropdown-item.order-paper-item").append(`<ul class="dropdown-submenu">${order_paper_items}<ul>`)
-        injectCSS(`
-            .down-arrow {
-                display: inline-block;
-                transform: rotate(90deg);
-            }
-            .dropdown-submenu {
-                display: none;
-                list-style-type: none;
-                padding: 0;
-                margin: 0;
-            }
-            .submenu-list {
-                padding: 5px 10px;
-            }
-            .submenu-list:hover {
-                background-color: var(--gray-200);
-            }
-            .dropdown-item:hover > .dropdown-submenu {
-                display: block;
-                margin-bottom: 0;
-            }
-        `)
-        $("a.submenu-list").click(function(){
-            var wo = $(this).text()
-            silent_print.newmatik.send2bridge(frm, "Order Papers", "ORDERPAPERS", wo)
-        })
+        // not using `add_button()` function because of other custom conditions
+        if (frm.doc.docstatus != 2){
+            var print_direct_icon = __('Print Direct <svg class="icon icon-sm"><use href="#icon-printer"></use></svg>');
+            frm.add_custom_button("Order Paper", function(){}, print_direct_icon).addClass("order-paper-item")
+            var order_paper_items = ""
+            work_orders.map((itm, idx)=>{
+                order_paper_items += `<li><a class="dropdown-item submenu-list" href="#">${itm.work_order}</a></li>`
+            })
+            // ORDER PAPER
+            var order_paper_items = ""
+            work_orders.map((itm, idx)=>{
+                order_paper_items += `<li><a class="dropdown-item submenu-list" href="#">${itm.work_order}</a></li>`
+            })
+            $("a.dropdown-item.order-paper-item").append(`<ul class="dropdown-submenu">${order_paper_items}<ul>`)
+            injectCSS(`
+                .down-arrow {
+                    display: inline-block;
+                    transform: rotate(90deg);
+                }
+                .dropdown-submenu {
+                    display: none;
+                    list-style-type: none;
+                    padding: 0;
+                    margin: 0;
+                }
+                .submenu-list {
+                    padding: 5px 10px;
+                }
+                .submenu-list:hover {
+                    background-color: var(--gray-200);
+                }
+                .dropdown-item:hover > .dropdown-submenu {
+                    display: block;
+                    margin-bottom: 0;
+                }
+            `)
+            $("a.submenu-list").click(function(){
+                var wo = $(this).text()
+                silent_print.newmatik.send2bridge(frm, "Order Papers", "ORDERPAPERS", wo)
+            })
+        }
     },
     shipment_button: function(frm) {
         add_button(function(){
@@ -208,21 +211,23 @@ $.extend(silent_print.newmatik, {
 })
 
 var add_button = function(fn, print_item_name=null){
-    var whb_status = silent_print.utils.whb_status
-    const print_icon = __('Print Direct <svg class="icon icon-sm"><use href="#icon-printer"></use></svg>');
-    if (whb_status != 'Connected'){
-        var print_direct = cur_frm.add_custom_button(print_icon, fn).removeClass().addClass('btn btn-secondary-dark');
-        print_direct.off('click').on('click', () => {
-            frappe.msgprint(__("Could not establish connection to the Webapp Hardware Bridge (WHB). Please verify that it is running before clicking the button again"));
-        })
-    }else{
-        if (print_item_name!=null){
-            var print_direct = cur_frm.add_custom_button(print_item_name, fn, print_icon);
-            print_direct.parent().parent().find("button.btn-default").addClass("btn-primary");
+    if (cur_frm.doc.docstatus != 2){
+        var whb_status = silent_print.utils.whb_status
+        const print_icon = __('Print Direct <svg class="icon icon-sm"><use href="#icon-printer"></use></svg>');
+        if (whb_status != 'Connected'){
+            var print_direct = cur_frm.add_custom_button(print_icon, fn).removeClass().addClass('btn btn-secondary-dark');
+            print_direct.off('click').on('click', () => {
+                frappe.msgprint(__("Could not establish connection to the Webapp Hardware Bridge (WHB). Please verify that it is running before clicking the button again"));
+            })
         }else{
-            var print_direct = cur_frm.add_custom_button(print_item_name, fn, print_icon);
+            if (print_item_name!=null){
+                var print_direct = cur_frm.add_custom_button(print_item_name, fn, print_icon);
+                print_direct.parent().parent().find("button.btn-default").addClass("btn-primary");
+            }else{
+                var print_direct = cur_frm.add_custom_button(print_item_name, fn, print_icon);
+            }
+            return print_direct
         }
-        return print_direct
     }
 }
 
