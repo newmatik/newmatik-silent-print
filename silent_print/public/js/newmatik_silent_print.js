@@ -36,7 +36,7 @@ $.extend(silent_print.newmatik, {
         })
 
         // KITTING BOX LABEL
-        add_button(()=>{send2bridge(frm, "Kitting Box Label v2", "KITTING2", frm.doc.name)}, "Kitting Box Label")
+        add_button(()=>{send2bridge(frm, "Kitting Box Label", "KITTINGBOX", frm.doc.name)}, "Kitting Box Label")
 
         // RACK LABEL
         add_button(()=>{

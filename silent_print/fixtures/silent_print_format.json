@@ -22,26 +22,6 @@
  {
   "custom_height": null,
   "custom_width": null,
-  "default_print_type": "KITTING2",
-  "docstatus": 0,
-  "doctype": "Silent Print Format",
-  "margin_bot": "5",
-  "margin_left": "5",
-  "margin_right": "5",
-  "margin_top": "0",
-  "modified": "2024-10-04 07:21:17.677605",
-  "name": "Kitting Box Label v2",
-  "orientation": "Landscape",
-  "page_size": "A5",
-  "parent": null,
-  "parentfield": null,
-  "parenttype": null,
-  "print_format": "Kitting Box Label v2",
-  "use_default_margin": 0
- },
- {
-  "custom_height": null,
-  "custom_width": null,
   "default_print_type": "WOSHIPPINGLABEL",
   "docstatus": 0,
   "doctype": "Silent Print Format",
@@ -198,5 +178,25 @@
   "parenttype": null,
   "print_format": "Order Papers",
   "use_default_margin": 1
+ },
+ {
+  "custom_height": null,
+  "custom_width": null,
+  "default_print_type": "KITTINGBOX",
+  "docstatus": 0,
+  "doctype": "Silent Print Format",
+  "margin_bot": "5",
+  "margin_left": "5",
+  "margin_right": "5",
+  "margin_top": "0",
+  "modified": "2025-01-27 18:37:06.059275",
+  "name": "Kitting Box Label",
+  "orientation": "Landscape",
+  "page_size": "A4",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null,
+  "print_format": "Kitting Box Label",
+  "use_default_margin": 0
  }
 ]
