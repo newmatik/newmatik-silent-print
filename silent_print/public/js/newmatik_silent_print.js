@@ -190,7 +190,14 @@ $.extend(silent_print.newmatik, {
         add_button(function(){
             send2bridge(frm, "Delivery Note De", "DELIVERYNOTE", frm.doc.name, 0, frm.doc.language);
             send2bridge(frm, "Delivery Note De", "DELIVERYNOTE1", frm.doc.name, 0, frm.doc.language);
-        })
+        }, 'Print White+Pink')
+
+        add_button(function(){
+            send2bridge(frm, "Delivery Note De", "DELIVERYNOTE", frm.doc.name, 0, frm.doc.language);
+        }, 'Print White Only')
+        add_button(function(){
+            send2bridge(frm, "Delivery Note De", "DELIVERYNOTE1", frm.doc.name, 0, frm.doc.language);
+        }, 'Print Pink Only')
     },
     warehouse_button: function(frm) {
         add_button(function(){
@@ -224,6 +231,7 @@ var add_button = function(fn, print_item_name=null){
                 var print_direct = cur_frm.add_custom_button(print_item_name, fn, print_icon);
                 print_direct.parent().parent().find("button.btn-default").addClass("btn-primary");
             }else{
+                console.log('else')
                 var print_direct = cur_frm.add_custom_button(print_item_name, fn, print_icon);
             }
             return print_direct
